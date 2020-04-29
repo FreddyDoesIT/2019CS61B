@@ -1,0 +1,25 @@
+package Exercises;
+
+public class DogLoop {
+  public static void main(String[] args) {
+    Dog smallDog = new Dog(5);
+    Dog mediumDog = new Dog(25);
+    Dog hugeDog = new Dog(150);
+
+    Dog[] manyDogs = new Dog[4];
+    manyDogs[0] = smallDog;
+    manyDogs[1] = hugeDog;
+    manyDogs[2] = new Dog(130);
+
+    // bark. bark.
+    // woof!
+    // woof!
+    // NPE since manyDogs[3] is null
+    int i = 0;
+    while (i < manyDogs.length) {
+      Dog.maxDog(manyDogs[i], mediumDog).makeNoise();
+      i = i + 1;
+    }
+  }
+
+}
