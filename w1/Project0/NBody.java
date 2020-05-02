@@ -1,6 +1,63 @@
 package Project0;
 
 public class NBody {
+  public static final String BACKGROUND = "Project0/images/starfield.jpg";
+  public static void main(String[] args) {
+    double T = Double.valueOf(args[0]);
+    double dt = Double.valueOf(args[1]);
+    String filename = args[2];
+    Body[] bodies = readBodies(filename);
+    double uniRadius = readRadius(filename);
+
+    // Draw the background
+    StdDraw.setScale(-uniRadius, uniRadius);
+    StdDraw.clear();
+    StdDraw.picture(0, 0, BACKGROUND);
+
+    // Draw planets
+    for (Body body: bodies) {
+      body.draw();
+    }
+
+    // Animation
+    StdDraw.enableDoubleBuffering();
+    double time = 0;
+    int num = bodies.length;
+    while (time <= T) {
+      double[] xForces = new double[num];
+      double[] yForces = new double[num];
+      for (int i = 0; i < num; i++) {
+        xForces[i] = bodies[i].calcNetForceExertedByX(bodies);
+        yForces[i] = bodies[i].calcNetForceExertedByY(bodies);
+      }
+      for (int i = 0; i < 5; i++) {
+        bodies[i].update(dt, xForces[i], yForces[i]);
+      }
+
+      // drawing background
+      StdDraw.picture(0, 0, BACKGROUND);
+
+      // drawing bodies on the background
+      for (Body body: bodies) {
+        body.draw();
+      }
+
+      StdDraw.show();
+      StdDraw.pause(10);
+
+      time += dt;
+    }
+
+    StdOut.printf("%d\n", bodies.length);
+    StdOut.printf("%.2e\n", uniRadius);
+    for (int i = 0; i < bodies.length; i++) {
+      StdOut.printf("%11.4e %11.4e %11.4e %11.4e %11.4e %12s\n",
+              bodies[i].xxPos, bodies[i].yyPos, bodies[i].xxVel,
+              bodies[i].yyVel, bodies[i].mass, bodies[i].imgFileName);
+    }
+
+  }
+
   /**
    5
    2.50e+11
@@ -49,19 +106,4 @@ public class NBody {
 
     return bodies;
   }
-
-  public static void main(String[] args) {
-    if (args.length != 3) {
-      System.out.println("You should have 3 arguments: "
-              + "[time] [dt] [filename] to proceed.");
-    }
-    double T = Double.valueOf(args[0]);
-    double dt = Double.valueOf(args[1]);
-    String filename = args[2];
-    double radius = readRadius(filename);
-    Body[] bodies = readBodies(filename);
-
-
-  }
-
 }

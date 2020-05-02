@@ -52,7 +52,8 @@ public class Body {
   public double calcDistance(Body b) {
     double dx = Math.abs(this.xxPos - b.xxPos);
     double dy = Math.abs(this.yyPos - b.yyPos);
-    return Math.sqrt(dx * dx + dy * dy);
+//    return Math.sqrt(dx * dx + dy * dy);
+    return Math.hypot(dx, dy);
   }
 
   /**
@@ -110,14 +111,19 @@ public class Body {
     return fNetY;
   }
 
-  public void update (double time, double fNetX, double fNetY) {
+  public void update (double dt, double fNetX, double fNetY) {
     double aX = fNetX / this.mass;
     double aY = fNetY / this.mass;
-    this.xxVel = this.xxVel + aX * time;
-    this.yyVel = this.yyVel + aY * time;
-    this.xxPos = this.xxPos + this.xxVel * time;
-    this.yyPos = this.yyPos + this.yyVel * time;
+    this.xxVel += aX * dt;
+    this.yyVel += aY * dt;
+    this.xxPos += this.xxVel * dt;
+    this.yyPos += this.yyVel * dt;
   }
 
-
+  public void draw() {
+    StdDraw.picture(
+            this.xxPos,
+            this.yyPos,
+            "Project0/images/" + this.imgFileName);
+  }
 }
