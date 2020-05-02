@@ -8,8 +8,7 @@ public class Body {
   public double mass;
   public String imgFileName;
   // Java supports scientific notation
-  // G = 6.67⋅10^-11
-  public static final double G = 6.67e-11;
+  public static final double G = 6.67e-11; // G = 6.67⋅10^-11
 
   /**
    * The first constructor takes several parameters to build a body object.

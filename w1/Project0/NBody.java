@@ -1,7 +1,9 @@
 package Project0;
 
 public class NBody {
+
   public static final String BACKGROUND = "Project0/images/starfield.jpg";
+
   public static void main(String[] args) {
     double T = Double.valueOf(args[0]);
     double dt = Double.valueOf(args[1]);
@@ -48,6 +50,9 @@ public class NBody {
       time += dt;
     }
 
+    /**
+     * Printing the universe
+     */
     StdOut.printf("%d\n", bodies.length);
     StdOut.printf("%.2e\n", uniRadius);
     for (int i = 0; i < bodies.length; i++) {
@@ -57,16 +62,6 @@ public class NBody {
     }
 
   }
-
-  /**
-   5
-   2.50e+11
-   1.4960e+11  0.0000e+00  0.0000e+00  2.9800e+04  5.9740e+24    earth.gif
-   2.2790e+11  0.0000e+00  0.0000e+00  2.4100e+04  6.4190e+23     mars.gif
-   5.7900e+10  0.0000e+00  0.0000e+00  4.7900e+04  3.3020e+23  mercury.gif
-   0.0000e+00  0.0000e+00  0.0000e+00  0.0000e+00  1.9890e+30      sun.gif
-   1.0820e+11  0.0000e+00  0.0000e+00  3.5000e+04  4.8690e+24    venus.gif
-   */
 
   /**
    * Given a file name as a String, it should return a double corresponding
@@ -106,4 +101,15 @@ public class NBody {
 
     return bodies;
   }
+
+  /**
+   5
+   2.50e+11
+   1.4960e+11  0.0000e+00  0.0000e+00  2.9800e+04  5.9740e+24    earth.gif
+   2.2790e+11  0.0000e+00  0.0000e+00  2.4100e+04  6.4190e+23     mars.gif
+   5.7900e+10  0.0000e+00  0.0000e+00  4.7900e+04  3.3020e+23  mercury.gif
+   0.0000e+00  0.0000e+00  0.0000e+00  0.0000e+00  1.9890e+30      sun.gif
+   1.0820e+11  0.0000e+00  0.0000e+00  3.5000e+04  4.8690e+24    venus.gif
+   */
+
 }
