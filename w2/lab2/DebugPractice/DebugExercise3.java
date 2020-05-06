@@ -1,7 +1,5 @@
 package lab2.DebugPractice;
 
-import Project0.In;
-
 /**
  * Created by jug on 1/22/18.
  */
