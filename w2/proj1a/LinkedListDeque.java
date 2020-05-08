@@ -1,7 +1,9 @@
 package proj1a;
 
+import sun.awt.image.ImageWatched;
+
 public class LinkedListDeque<T> {
-  private class ItemNode<T> {
+  private static class ItemNode<T> {
     private T item;
     private ItemNode prev;
     private ItemNode next;
@@ -26,7 +28,11 @@ public class LinkedListDeque<T> {
    * Creates a deep copy of {@code other}.
    */
   public LinkedListDeque(LinkedListDeque other) {
-
+    size = 0;
+    sentinel = new ItemNode(0, null, null);
+    for (int i = 0; i < other.size(); i++) {
+      addLast((T)other.get(i));
+    }
   }
 
   /**
@@ -50,7 +56,7 @@ public class LinkedListDeque<T> {
    * Adds an item of type T to the back of the deque.
    */
   public void addLast(T item) {
-    if (size == 0) {
+    if (isEmpty()) {
       addFirst(item);
     } else {
       ItemNode oriLast = sentinel.prev;
@@ -105,9 +111,7 @@ public class LinkedListDeque<T> {
     ItemNode second = first.next;
     sentinel.next = second;
     second.prev = sentinel;
-    first.item = null;
-    first.next = null;
-    first.prev = null;
+    nullifyItem(first);
     size -= 1;
 
     return item;
@@ -131,12 +135,16 @@ public class LinkedListDeque<T> {
       ItemNode secondToLast = last.prev;
       secondToLast.next = sentinel;
       sentinel.prev = secondToLast;
-      last.prev = null;
-      last.next = null;
-      last.item = null;
+      nullifyItem(last);
       size -= 1;
     }
     return item;
+  }
+
+  private void nullifyItem(ItemNode node) {
+    node.prev = null;
+    node.item = null;
+    node.next = null;
   }
 
   /**
@@ -189,11 +197,17 @@ public class LinkedListDeque<T> {
     lld.addFirst(1);
     lld.addLast(20);
     lld.addFirst(20);
+    lld.addLast(17);
+    lld.addLast(173);
+    lld.addLast(173173);
     lld.printDeque();
+    System.out.println("size is: " + lld.size());
     System.out.println(lld.removeFirst());
     lld.printDeque();
+    System.out.println("size is: " + lld.size());
     System.out.println(lld.removeLast());
     lld.printDeque();
+    System.out.println("size is: " + lld.size());
 
     for (int i = 0; i < lld.size; i++) {
       System.out.println("Position " + i + ": " + lld.get(i));
@@ -202,5 +216,8 @@ public class LinkedListDeque<T> {
     for (int i = 0; i < lld.size; i++) {
       System.out.println("Position " + i + ": " + lld.getRecursive(i));
     }
+
+    LinkedListDeque lld2 = new LinkedListDeque(lld);
+    System.out.println("lld2.size is: " + lld2.size());
   }
 }
