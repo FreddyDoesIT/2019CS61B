@@ -1,7 +1,5 @@
 package proj1a;
 
-import sun.awt.image.ImageWatched;
-
 public class LinkedListDeque<T> {
   private static class ItemNode<T> {
     private T item;
