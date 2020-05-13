@@ -109,7 +109,7 @@ public class LinkedListDeque<T> {
     ItemNode second = first.next;
     sentinel.next = second;
     second.prev = sentinel;
-    nullifyItem(first);
+    nullifyItemNode(first);
     size -= 1;
 
     return item;
@@ -133,16 +133,16 @@ public class LinkedListDeque<T> {
       ItemNode secondToLast = last.prev;
       secondToLast.next = sentinel;
       sentinel.prev = secondToLast;
-      nullifyItem(last);
+      nullifyItemNode(last);
       size -= 1;
     }
     return item;
   }
 
-  private void nullifyItem(ItemNode node) {
-    node.prev = null;
-    node.item = null;
-    node.next = null;
+  private void nullifyItemNode(ItemNode itemNode) {
+    itemNode.prev = null;
+    itemNode.item = null;
+    itemNode.next = null;
   }
 
   /**
@@ -171,7 +171,7 @@ public class LinkedListDeque<T> {
         return node;
       }
 
-      return finder(node.next, count += 1, index);
+      return finder(node.next, count + 1, index);
   }
 
   /**
@@ -186,7 +186,7 @@ public class LinkedListDeque<T> {
   }
 
   public static void main(String[] args) {
-    LinkedListDeque lld = new LinkedListDeque();
+    LinkedListDeque<Integer> lld = new LinkedListDeque<>();
     System.out.println(lld.removeFirst());
     System.out.println(lld.removeLast());
     lld.addLast(88);
@@ -215,7 +215,7 @@ public class LinkedListDeque<T> {
       System.out.println("Position " + i + ": " + lld.getRecursive(i));
     }
 
-    LinkedListDeque lld2 = new LinkedListDeque(lld);
+    LinkedListDeque<Integer> lld2 = new LinkedListDeque<>(lld);
     System.out.println("lld2.size is: " + lld2.size());
   }
 }
