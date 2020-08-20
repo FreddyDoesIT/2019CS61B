@@ -3,6 +3,7 @@ package creatures;
 import huglife.Creature;
 import huglife.Direction;
 import huglife.Action;
+import huglife.HugLifeUtils;
 import huglife.Occupant;
 
 import java.awt.Color;
@@ -31,14 +32,34 @@ public class Plip extends Creature {
     private int b;
 
     /**
+     * Plips should lose 0.15 units of energy when moving.
+     */
+    private static final double LOST_ENERGY_WHEN_MOVING = 0.15;
+    /**
+     * Plips should gain energy each time when staying.
+     */
+    private static final double GAINED_ENERGY_WHEN_STAYING = 0.2;
+    /**
+     * The max energy of Plips.
+     */
+    private static final int MAX_ENERGY = 2;
+    /**
+     * The min energy of Plips
+     */
+    private static final int MIN_ENERGY = 0;
+    /**
+     * probability of taking a move when ample space available.
+     */
+    private double moveProbability = 0.5;
+    /**
      * creates plip with energy equal to E.
      */
     public Plip(double e) {
         super("plip");
-        r = 0;
-        g = 0;
-        b = 0;
         energy = e;
+        r = 99;
+        g = this.getGreen();
+        b = 76;
     }
 
     /**
@@ -57,8 +78,12 @@ public class Plip extends Creature {
      * that you get this exactly correct.
      */
     public Color color() {
-        g = 63;
+        g = this.getGreen();
         return color(r, g, b);
+    }
+
+    private int getGreen() {
+        return (int) (96 * energy() + 63);
     }
 
     /**
@@ -74,7 +99,10 @@ public class Plip extends Creature {
      * private static final variable. This is not required for this lab.
      */
     public void move() {
-        // TODO
+        energy -= LOST_ENERGY_WHEN_MOVING;
+        if (energy() < MIN_ENERGY) {
+            energy = MIN_ENERGY;
+        }
     }
 
 
@@ -82,7 +110,10 @@ public class Plip extends Creature {
      * Plips gain 0.2 energy when staying due to photosynthesis.
      */
     public void stay() {
-        // TODO
+        energy += GAINED_ENERGY_WHEN_STAYING;
+        if (energy() > MAX_ENERGY) {
+            energy = MAX_ENERGY;
+        }
     }
 
     /**
@@ -91,7 +122,9 @@ public class Plip extends Creature {
      * Plip.
      */
     public Plip replicate() {
-        return this;
+        Plip offspring = new Plip(this.energy / 2);
+        this.energy /= 2;
+        return offspring;
     }
 
     /**
@@ -111,18 +144,31 @@ public class Plip extends Creature {
         // Rule 1
         Deque<Direction> emptyNeighbors = new ArrayDeque<>();
         boolean anyClorus = false;
-        // TODO
         // (Google: Enhanced for-loop over keys of NEIGHBORS?)
         // for () {...}
-
-        if (false) { // FIXME
-            // TODO
+        for (Direction d: neighbors.keySet()) {
+            if (neighbors.get(d).name().equals("empty")) {
+                emptyNeighbors.add(d);
+            }
+        }
+        if (emptyNeighbors.isEmpty()) {
+            return new Action(Action.ActionType.STAY);
         }
 
         // Rule 2
         // HINT: randomEntry(emptyNeighbors)
+        if (energy() >= 1) {
+            Direction d = HugLifeUtils.randomEntry(emptyNeighbors);
+            return new Action(Action.ActionType.REPLICATE, d);
+        }
 
         // Rule 3
+        for (Direction d: neighbors.keySet()) {
+            if (neighbors.get(d).name().equals("clorus") && Math.random() < moveProbability) {
+                Direction moveTo = HugLifeUtils.randomEntry(emptyNeighbors);
+                return new Action(Action.ActionType.MOVE, moveTo);
+            }
+        }
 
         // Rule 4
         return new Action(Action.ActionType.STAY);
