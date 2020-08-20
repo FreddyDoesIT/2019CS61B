@@ -112,9 +112,13 @@ public class Clorus extends Creature {
     }
     if (!plips.isEmpty()) {
       Direction directionToAttack = HugLifeUtils.randomEntry(plips);
-      Plip plipToBeAttacked = (Plip) neighbors.get(directionToAttack);
-      attack(plipToBeAttacked);
-      return new Action(Action.ActionType.ATTACK, directionToAttack);
+      // downcasting occupant to Plip to invoke Plip's attack method
+      Occupant occupant = neighbors.get(directionToAttack);
+      if (occupant instanceof Plip) {
+        Plip plipToBeAttacked = (Plip) occupant;
+        attack(plipToBeAttacked);
+        return new Action(Action.ActionType.ATTACK, directionToAttack);
+      }
     }
 
     Direction empty = HugLifeUtils.randomEntry(emptyNeighbors);
