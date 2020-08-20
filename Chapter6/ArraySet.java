@@ -158,6 +158,13 @@ public class ArraySet<T> implements Iterable<T>{
     return "[" + String.join(", ", list) + "]";
   }
 
+  /**
+   * == compares the two objects' memory location directly.
+   * default equals actually uses == to compare.
+   *
+   * @param other
+   * @return
+   */
   @Override
   public boolean equals(Object other) {
     if (other == null) {
