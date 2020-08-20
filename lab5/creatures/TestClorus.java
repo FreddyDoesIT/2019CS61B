@@ -30,24 +30,27 @@ public class TestClorus {
   @Test
   public void testChooseAction() {
     Clorus c = new Clorus();
-    // test rule1
-    Map<Direction, Occupant> neighbors1 = new HashMap<>();
-    neighbors1.put(Direction.TOP, new Impassible());
-    neighbors1.put(Direction.BOTTOM, new Impassible());
-    neighbors1.put(Direction.LEFT, new Impassible());
-    neighbors1.put(Direction.RIGHT, new Impassible());
-    Action action1 = c.chooseAction(neighbors1);
+    // test rule1: If there are no empty squares, the Clorus will STAY
+    // (even if there are Plips nearby they could attack
+    // since plip squares do not count as empty squares).
+    Map<Direction, Occupant> allImpassible = new HashMap<>();
+    allImpassible.put(Direction.TOP, new Impassible());
+    allImpassible.put(Direction.BOTTOM, new Impassible());
+    allImpassible.put(Direction.LEFT, new Impassible());
+    allImpassible.put(Direction.RIGHT, new Impassible());
+    Action action1 = c.chooseAction(allImpassible);
     assertEquals(Action.ActionType.STAY, action1.type);
 
-    Map<Direction, Occupant> neighbors2 = new HashMap<>();
-    neighbors2.put(Direction.TOP, new Plip());
-    neighbors2.put(Direction.BOTTOM, new Plip());
-    neighbors2.put(Direction.LEFT, new Impassible());
-    neighbors2.put(Direction.RIGHT, new Impassible());
-    Action action2 = c.chooseAction(neighbors2);
+    Map<Direction, Occupant> leftRightImpassible = new HashMap<>();
+    leftRightImpassible.put(Direction.TOP, new Plip());
+    leftRightImpassible.put(Direction.BOTTOM, new Plip());
+    leftRightImpassible.put(Direction.LEFT, new Impassible());
+    leftRightImpassible.put(Direction.RIGHT, new Impassible());
+    Action action2 = c.chooseAction(leftRightImpassible);
     assertEquals(Action.ActionType.STAY, action2.type);
 
-    // test rule2
+    // test rule2:
+    // Otherwise, if any Plips are seen, the Clorus will ATTACK one of them randomly.
     Map<Direction, Occupant> neighbors3 = new HashMap<>();
     Plip p = new Plip();
     double expectedEnergy = c.energy() + p.energy();
@@ -59,7 +62,8 @@ public class TestClorus {
     assertEquals(Action.ActionType.ATTACK, action3.type);
     assertEquals(expectedEnergy, c.energy(), 0.01);
 
-    // test rule3
+    // test rule3: Otherwise, if the Clorus has energy greater than or equal to one,
+    // it will REPLICATE to a random empty square.
     double e = 2.0;
     assertEquals(e, c.energy(),0.01);
     Map<Direction, Occupant> neighbors4 = new HashMap<>();
@@ -70,7 +74,7 @@ public class TestClorus {
     Action action4 = c.chooseAction(neighbors4);
     assertEquals(Action.ActionType.REPLICATE, action4.type);
 
-    // test rule4
+    // test rule4: Otherwise, the Clorus will MOVE to a random empty square.
     for (int i = 1; i <= 50; i++) {
       c.move();
     }

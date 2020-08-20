@@ -1,4 +1,5 @@
 package creatures;
+import org.junit.ComparisonFailure;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import java.util.HashMap;
@@ -108,6 +109,33 @@ public class TestPlip {
         assertEquals(expected, actual);
 
 
-        // We don't have Cloruses yet, so we can't test behavior for when they are nearby right now.
+        // Test if encountering any Clorus,
+        // there is 50% probability to MOVE to any available direction.
+        HashMap<Direction, Occupant> neighbors = new HashMap<Direction, Occupant>();
+        neighbors.put(Direction.TOP, new Clorus());
+        neighbors.put(Direction.BOTTOM, new Clorus());
+        neighbors.put(Direction.LEFT, new Empty());
+        neighbors.put(Direction.RIGHT, new Clorus());
+
+        boolean move = false;
+        boolean stay = false;
+        while (true) {
+            actual = p.chooseAction(neighbors);
+            expected = new Action(Action.ActionType.STAY);
+            Action expected1 = new Action(Action.ActionType.MOVE, Direction.LEFT);
+
+            try {
+                assertEquals(expected1, actual);
+                System.out.println("The plip chose to MOVE.");
+                move = true;
+            } catch (AssertionError failure) {
+                assertEquals(expected, actual);
+                System.out.println("The plip chose to STAY.");
+                stay = true;
+            }
+            if (move && stay) {
+                break;
+            }
+        }
     }
 }
