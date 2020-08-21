@@ -76,7 +76,7 @@ public class ArrayRingBuffer<T>  implements BoundedQueue<T> {
     }
 
     private int updateIndex (int index) {
-        return (index + 1) % this.capacity();
+        return index % this.capacity();
     }
 
     /**
