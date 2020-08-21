@@ -94,5 +94,65 @@ public class ArrayRingBuffer<T>  implements BoundedQueue<T> {
 
     // TODO: When you get to part 4, implement the needed code to support
     //       iteration and equals.
+    @Override
+    public Iterator<T> iterator() {
+        return new BufferIterator();
+    }
+
+    private class BufferIterator implements Iterator<T> {
+        private int position;
+        private int counter;
+        public BufferIterator() {
+            position = last;
+            counter = fillCount;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return counter != 0;
+        }
+
+        @Override
+        public T next() {
+            counter--;
+            return rb[position++];
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        Iterator iterator = this.iterator();
+        while (iterator.hasNext()) {
+            sb.append(iterator.next() + " ");
+        }
+
+        return sb.toString().trim();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other == null) {
+            return false;
+        }
+        if (this == other) {
+            return true;
+        }
+        if (this.getClass() != other.getClass()) {
+            return false;
+        }
+        ArrayRingBuffer<T> o = (ArrayRingBuffer<T>)other;
+        if (this.capacity() != o.capacity()) {
+            return false;
+        }
+        Iterator iterator1 = this.iterator();
+        Iterator iterator2 = o.iterator();
+        while (iterator1.hasNext()) {
+            if (!iterator1.next().equals(iterator2.next())) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
     // TODO: Remove all comments that say TODO when you're done.

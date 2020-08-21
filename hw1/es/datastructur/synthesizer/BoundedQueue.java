@@ -10,7 +10,7 @@ package es.datastructur.synthesizer;
  * All methods that you declare or define are
  * automatically public and abstract (even if you omit the public keyword).
  */
-public interface BoundedQueue<T> {
+public interface BoundedQueue<T> extends Iterable<T> {
 
   /**
    *
@@ -58,4 +58,7 @@ public interface BoundedQueue<T> {
   default boolean isFull() {
     return fillCount() == capacity();
   }
+
+
+
 }

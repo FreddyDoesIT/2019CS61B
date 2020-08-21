@@ -71,4 +71,23 @@ public class TestArrayRingBuffer {
         actual = (int)arb2.peek();
         assertEquals(expected, actual);
     }
+
+    @Test
+    public void testEquals() {
+        ArrayRingBuffer arb = new ArrayRingBuffer(5);
+        for (int i = 0; i < 5; i++) {
+            arb.enqueue(i);
+        }
+
+        String actual = arb.toString();
+        String expected = "0 1 2 3 4";
+        assertTrue(actual.equals(expected));
+
+        ArrayRingBuffer arb2 = new ArrayRingBuffer(5);
+        for (int i = 0; i < 5; i++) {
+            arb2.enqueue(i);
+        }
+
+        assertTrue(arb.equals(arb2));
+    }
 }
