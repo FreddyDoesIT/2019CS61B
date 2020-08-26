@@ -1,6 +1,3 @@
-import java.util.ArrayList;
-import java.util.List;
-
 public class UnionFind2 {
 
   // TODO - Add instance variables?
