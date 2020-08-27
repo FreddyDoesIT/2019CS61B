@@ -92,6 +92,6 @@ public class BubbleGrid {
 
     // turn a 2d coordinate to 1d array index
     private int convertCoordinateToIndex(int row, int col) {
-        return row * rowNum + col + 1;
+        return row * colNum + col + 1;
     }
 }
