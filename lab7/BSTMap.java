@@ -24,13 +24,15 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
    */
   @Override
   public void clear() {
-    root.size = 0;
     root = null;
   }
 
   /** Returns true if this map contains a mapping for the specified key. */
   @Override
   public boolean containsKey(K key) {
+    if (key == null) {
+      throw new IllegalArgumentException("Key cannot be null.");
+    }
     return get(key) != null;
   }
 
@@ -44,13 +46,18 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
   }
 
   private V find(K key, Node rootCopy) {
-    if (key == null || rootCopy == null) {
+    if (key == null) {
+      throw new IllegalArgumentException("Key cannot be null.");
+    }
+
+    if (rootCopy == null) {
       return null;
     }
 
-    if (key.compareTo(rootCopy.key) == 0) {
+    int cmp = key.compareTo(rootCopy.key);
+    if (cmp == 0) {
       return rootCopy.value;
-    } else if (key.compareTo(rootCopy.key) < 0) {
+    } else if (cmp < 0) {
       return find(key, rootCopy.left);
     } else {
       return find(key, rootCopy.right);
@@ -60,7 +67,11 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
   /** Returns the number of key-value mappings in this map. */
   @Override
   public int size() {
-    return root == null ? 0 : root.size + 1;
+    return size(root);
+  }
+
+  private int size(Node node) {
+    return node == null ? 0 : node.size + 1;
   }
 
   /** Associates the specified value with the specified key in this map. */
@@ -70,37 +81,59 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
       return;
     }
 
-    Node toPut = new Node(key, value, 0);
-    if (root == null) {
-      root = toPut;
-      return;
-    }
-
-    if (key.compareTo(root.key) == 0) {
-      throw new IllegalArgumentException("This item has existed.");
-    }
-
     Node node = root;
-    onPut(toPut, node);
-    root.size++;
+    root = onPut(node, key, value);
+//    Node toPut = new Node(key, value, 0);
+//    if (root == null) {
+//      root = toPut;
+//      return;
+//    }
+//
+//    if (key.compareTo(root.key) == 0) {
+//      throw new IllegalArgumentException("This item has existed.");
+//    }
+//
+//    Node node = root;
+//    onPut(toPut, node);
+//    root.size++;
   }
 
-  private void onPut(Node node, Node rootCopy) {
-    if (node.key.compareTo(rootCopy.key) < 0) {
-      if (rootCopy.left == null) {
-        rootCopy.left = node;
-        return;
-      }
-      onPut(node, rootCopy.left);
-    } else {
-      if (rootCopy.right == null) {
-        rootCopy.right = node;
-        return;
-      }
-      onPut(node, rootCopy.right);
+  private Node onPut(Node x, K key, V value) {
+    if (x == null) {
+      return new Node(key, value, 0);
     }
+
+    int cmp = key.compareTo(x.key);
+    if (cmp == 0) {
+      // update x's value
+      x.value = value;
+    } else if (cmp < 0) {
+      x.left = onPut(x.left, key, value);
+    } else {
+      x.right = onPut(x.right, key, value);
+    }
+
+    x.size = size(x.left) + size(x.right);
+    return x;
   }
 
+//  private void onPut(Node node, Node rootCopy) {
+//    if (node.key.compareTo(rootCopy.key) < 0) {
+//      if (rootCopy.left == null) {
+//        rootCopy.left = node;
+//        return;
+//      }
+//      onPut(node, rootCopy.left);
+//    } else {
+//      if (rootCopy.right == null) {
+//        rootCopy.right = node;
+//        return;
+//      }
+//      onPut(node, rootCopy.right);
+//    }
+//  }
+
+  /** Print the BSTMap (key, vale) pairs in increasing of order of key. */
   public void printInOrder() {
     printInOrder(root);
   }
