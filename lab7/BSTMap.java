@@ -1,5 +1,7 @@
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.Stack;
 
 public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
 
@@ -18,7 +20,11 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
 
   /* root of BST */
   private Node root;
+  private Set<K> keySet;
 
+  public BSTMap() {
+    keySet = new HashSet<>();
+  }
   /**
    * Removes all of the mappings from this map.
    */
@@ -83,6 +89,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
 
     Node node = root;
     root = onPut(node, key, value);
+    keySet.add(key);
 //    Node toPut = new Node(key, value, 0);
 //    if (root == null) {
 //      root = toPut;
@@ -151,7 +158,11 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
   /** Returns a Set view of the keys contained in this map. */
   @Override
   public Set<K> keySet() {
-    return null;
+    if (root == null) {
+      return null;
+    }
+
+    return keySet;
   }
 
   /** Removes the mapping for the specified key from this map if present.
@@ -159,7 +170,35 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
    * UnsupportedOperationException. */
   @Override
   public V remove(K key) {
-    return null;
+    if (key == null) {
+      throw new IllegalArgumentException("Key cannot be null.");
+    }
+
+    V result = null;
+    Node copy = root;
+    if (containsKey(key)) {
+      keySet.remove(key);
+      result = remove(key, copy);
+    }
+    root.size--;
+    return result;
+  }
+
+  private V remove (K key, Node node) {
+    int cmp = key.compareTo(node.key);
+    if (cmp == 0) {
+      V result = node.value;
+      Node temp = node.left;
+      if (node.right != null) {
+        node = node.right;
+      }
+      node.left = temp;
+      return result;
+    } else if (cmp < 0) {
+      return remove(key, node.left);
+    } else {
+      return remove(key, node.right);
+    }
   }
 
   /** Removes the entry for the specified key only if it is currently mapped to
@@ -167,7 +206,41 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
    * throw an UnsupportedOperationException.*/
   @Override
   public V remove(K key, V value) {
+    if (key == null) {
+      throw new IllegalArgumentException("Key cannot be null.");
+    }
+
+    Node copy = root;
+    if (containsKey(key)) {
+      keySet.remove(key);
+      if (remove(key, value, copy)) {
+        root.size --;
+        return value;
+      } else {
+        return null;
+      }
+    }
     return null;
+  }
+
+  private boolean remove (K key, V value, Node node) {
+    int cmp = key.compareTo(node.key);
+    if (cmp == 0) {
+      V result = node.value;
+      if (result.equals(value)) {
+        Node temp = node.left;
+        if (node.right != null) {
+          node = node.right;
+        }
+        node.left = temp;
+        return true;
+      }
+      return false;
+    } else if (cmp < 0) {
+      return remove(key, value, node.left);
+    } else {
+      return remove(key, value, node.right);
+    }
   }
 
   /**
@@ -177,6 +250,52 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
    */
   @Override
   public Iterator<K> iterator() {
-    return null;
+    return new BSTMapIterator(root);
+  }
+
+  private class BSTMapIterator implements Iterator<K>{
+    private Stack<Node> stack;
+
+    // first push and root and all its left nodes to the stack
+    BSTMapIterator(Node node) {
+      stack = new Stack<>();
+      while (node != null) {
+        stack.push(node);
+        node = node.left;
+      }
+    }
+
+    public boolean hasNext() {
+      return !stack.isEmpty();
+    }
+
+    public K next() {
+      Node cur = stack.pop();
+
+      if (cur.right != null) {
+        Node temp = cur.right;
+        //push all left nodes of this current node to stack
+        while (temp != null) {
+          stack.push(temp);
+          temp = temp.left;
+        }
+      }
+
+      return cur.key;
+    }
+  }
+
+  public static void main(String[] args) {
+    BSTMap<String, Integer> bstMap = new BSTMap<>();
+    for (int i = 0; i < 10; i++) {
+      bstMap.put("hi" + i, 1 + i);
+    }
+
+    bstMap.printInOrder();
+
+    Iterator<String> itr = bstMap.iterator();
+    while (itr.hasNext()) {
+      System.out.println(itr.next());
+    }
   }
 }
