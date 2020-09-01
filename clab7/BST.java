@@ -1,5 +1,4 @@
 import java.util.NoSuchElementException;
-
 /*  @author Josh Hug, with most code created by:
  *  @author Robert Sedgewick
  *  @author Kevin Wayne
@@ -9,6 +8,10 @@ public class BST<Key extends Comparable<Key>> {
      * Initializes an empty BST.
      */
     public BST() {
+    }
+
+    public double averageDepth() {
+        return ExperimentHelper.optimalAverageDepth(this.size());
     }
 
     /**
