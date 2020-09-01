@@ -25,6 +25,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
   public BSTMap() {
     keySet = new HashSet<>();
   }
+
   /**
    * Removes all of the mappings from this map.
    */
@@ -33,17 +34,20 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     root = null;
   }
 
-  /** Returns true if this map contains a mapping for the specified key. */
+  /**
+   * Returns true if this map contains a mapping for the specified key.
+   */
   @Override
   public boolean containsKey(K key) {
     if (key == null) {
       throw new IllegalArgumentException("Key cannot be null.");
     }
-    return get(key) != null;
+    return keySet.contains(key) && get(key) != null;
   }
 
-  /** Returns the value to which the specified key is mapped, or null if this
-   * map contains no mapping for the key.
+  /**
+   * Returns the value to which the specified key is mapped, or null if this map contains no mapping
+   * for the key.
    */
   @Override
   public V get(K key) {
@@ -70,7 +74,9 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     }
   }
 
-  /** Returns the number of key-value mappings in this map. */
+  /**
+   * Returns the number of key-value mappings in this map.
+   */
   @Override
   public int size() {
     return size(root);
@@ -80,7 +86,9 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     return node == null ? 0 : node.size + 1;
   }
 
-  /** Associates the specified value with the specified key in this map. */
+  /**
+   * Associates the specified value with the specified key in this map.
+   */
   @Override
   public void put(K key, V value) {
     if (key == null) {
@@ -140,7 +148,9 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
 //    }
 //  }
 
-  /** Print the BSTMap (key, vale) pairs in increasing of order of key. */
+  /**
+   * Print the BSTMap (key, vale) pairs in increasing of order of key.
+   */
   public void printInOrder() {
     printInOrder(root);
   }
@@ -155,7 +165,9 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     printInOrder(root.right);
   }
 
-  /** Returns a Set view of the keys contained in this map. */
+  /**
+   * Returns a Set view of the keys contained in this map.
+   */
   @Override
   public Set<K> keySet() {
     if (root == null) {
@@ -165,95 +177,120 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     return keySet;
   }
 
-  /** Removes the mapping for the specified key from this map if present.
-   * Not required for Lab 8. If you don't implement this, throw an
-   * UnsupportedOperationException. */
+  /**
+   * Removes the mapping for the specified key from this map if present. Not required for Lab 8. If
+   * you don't implement this, throw an UnsupportedOperationException.
+   */
   @Override
   public V remove(K key) {
     if (key == null) {
       throw new IllegalArgumentException("Key cannot be null.");
     }
-
-    V result = null;
-    Node copy = root;
-    if (containsKey(key)) {
-      keySet.remove(key);
-      result = remove(key, copy);
+    if (!containsKey(key)) {
+      return null;
     }
-    root.size--;
-    return result;
+
+    V value = get(key);
+    root = removeHelper(key, root);
+    keySet.remove(key);
+
+    return value;
   }
 
-  private V remove (K key, Node node) {
-    int cmp = key.compareTo(node.key);
-    if (cmp == 0) {
-      V result = node.value;
-      Node temp = node.left;
-      if (node.right != null) {
-        node = node.right;
-      }
-      node.left = temp;
-      return result;
-    } else if (cmp < 0) {
-      return remove(key, node.left);
-    } else {
-      return remove(key, node.right);
-    }
-  }
-
-  /** Removes the entry for the specified key only if it is currently mapped to
-   * the specified value. Not required for Lab 8. If you don't implement this,
-   * throw an UnsupportedOperationException.*/
+  /**
+   * Removes the entry for the specified key only if it is currently mapped to the specified value.
+   * Not required for Lab 8. If you don't implement this, throw an UnsupportedOperationException.
+   */
   @Override
   public V remove(K key, V value) {
     if (key == null) {
       throw new IllegalArgumentException("Key cannot be null.");
     }
-
-    Node copy = root;
-    if (containsKey(key)) {
-      keySet.remove(key);
-      if (remove(key, value, copy)) {
-        root.size --;
-        return value;
-      } else {
-        return null;
-      }
+    if (!containsKey(key)) {
+      return null;
     }
-    return null;
-  }
-
-  private boolean remove (K key, V value, Node node) {
-    int cmp = key.compareTo(node.key);
-    if (cmp == 0) {
-      V result = node.value;
-      if (result.equals(value)) {
-        Node temp = node.left;
-        if (node.right != null) {
-          node = node.right;
-        }
-        node.left = temp;
-        return true;
-      }
-      return false;
-    } else if (cmp < 0) {
-      return remove(key, value, node.left);
-    } else {
-      return remove(key, value, node.right);
+    V result = get(key);
+    if (!result.equals(value)) {
+      return null;
     }
-  }
 
-  /**
-   * Returns an iterator over elements of type {@code T}.
-   *
-   * @return an Iterator.
+    root = removeHelper(key, root);
+    keySet.remove(key);
+
+    return result;
+  }
+  /*
+    Returns the tree which has the key to be removed.
    */
+  private Node removeHelper(K key, Node node) {
+    int cmp = key.compareTo(node.key);
+    if (cmp < 0) {
+      // at this point, after calling removeHelper,
+      // it returns a tree with the specified key being removed
+      // and this tree should belong to left tree of the given node
+      node.left = removeHelper(key, node.left);
+    } else if (cmp > 0) {
+      // same reason above
+      node.right = removeHelper(key, node.right);
+    } else {
+      // Three cases need to be considered:
+      // 1. it has only no child
+      // 2. it has one child
+      // 3. it has two child
+
+      // case 1 & case 2
+      if (node.left == null) {
+        return node.right;
+      }
+
+      if (node.right == null) {
+        return node.left;
+      }
+
+      // case 3: either choose the min node from its right subtree or the max node from its left subtree
+      // we choose the max from the left
+
+      // make a copy of current node
+      Node temp = node;
+      node = findMax(temp.left);
+      node.left = deleteMax(temp.left);
+      node.right = temp.right;
+    }
+    node.size = size(node.left) + size(node.right);
+    return node;
+  }
+
+  // find the max node on the given node's left subtree
+  private Node findMax(Node node) {
+    while (node.right != null) {
+      node = node.right;
+    }
+    return node;
+  }
+
+  // delete the max node from given node's left tree
+  private Node deleteMax(Node node) {
+    if (node.right == null) {
+      return node.left;
+    }
+
+    node.right = deleteMax(node.right);
+    node.size = size(node.left) + size(node.right);
+
+    return node;
+  }
+
+    /**
+     * Returns an iterator over elements of type {@code T}.
+     *
+     * @return an Iterator.
+     */
   @Override
   public Iterator<K> iterator() {
     return new BSTMapIterator(root);
   }
 
-  private class BSTMapIterator implements Iterator<K>{
+  private class BSTMapIterator implements Iterator<K> {
     private Stack<Node> stack;
 
     // first push and root and all its left nodes to the stack
