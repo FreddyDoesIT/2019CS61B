@@ -11,6 +11,7 @@ public class ComplexOomage implements Oomage {
 
     @Override
     public int hashCode() {
+        // the problem of this hashcode is it will overflow of the integer range
         int total = 0;
         for (int x : params) {
             total = total * 256;
