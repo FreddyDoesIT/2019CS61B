@@ -10,7 +10,7 @@ public class SimpleOomage implements Oomage {
     protected int blue;
 
     private static final double WIDTH = 0.01;
-    private static final boolean USE_PERFECT_HASH = false;
+    private static final boolean USE_PERFECT_HASH = true;
 
     @Override
     public boolean equals(Object o) {
@@ -24,16 +24,24 @@ public class SimpleOomage implements Oomage {
 
     /* Uncomment this method after you've written
        equals and failed the testHashCodeAndEqualsConsistency
-       test.
+       test.*/
     @Override
     public int hashCode() {
         if (!USE_PERFECT_HASH) {
             return red + green + blue;
         } else {
             // TODO: Write a perfect hash function for Simple Oomages.
-            return 0;
+            // The key here is r, g, b are a number of multiples of 5 between 0 and 255
+            // so the max multiplier is 51. In this case, 52 also works. And any number larger than
+            // 51 also works.
+            int hash = 0;
+            hash += red / 5 * Math.pow(52, 2);
+            hash += green / 5 * Math.pow(52, 1);
+            hash += blue / 5;
+
+            return hash;
         }
-    }*/
+    }
 
     public SimpleOomage(int r, int g, int b) {
         if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255) {
