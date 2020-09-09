@@ -157,7 +157,6 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
     entry = new Entry(bucketIndex, key, value, buckets[bucketIndex]);
     buckets[bucketIndex] = entry;
 
-    System.out.println(buckets[bucketIndex]);
     keySet.add(key);
     size += 1;
 
@@ -209,12 +208,47 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
 
   @Override
   public V remove(K key) {
-    throw new UnsupportedOperationException();
+    validate(key);
+    if (!containsKey(key)) {
+      return null;
+    }
+
+    int bucketIndex = hash(key, buckets.length);
+    Entry<K, V> entry = buckets[bucketIndex];
+    while (entry != null) {
+      if (bucketIndex == entry.hash && entry.isSameKey(key)) {
+        if (entry.getNext() != null) {
+          Entry<K, V> rest = entry.getNext();
+          Entry<K, V> restStart = rest;
+          while (rest.getNext() != null) {
+            rest = rest.getNext();
+          }
+          rest.setNext(buckets[bucketIndex]);
+          buckets[bucketIndex] = restStart;
+        }
+        V result = entry.getValue();
+        entry = null;
+        size--;
+        keySet.remove(key);
+        return result;
+      }
+      entry = entry.getNext();
+    }
+
+    return null;
   }
 
   @Override
   public V remove(K key, V value) {
-    throw new UnsupportedOperationException();
+    validate(key);
+    if (!containsKey(key)) {
+      return null;
+    }
+    if (!get(key).equals(value)) {
+      return null;
+    }
+
+    return remove(key);
   }
 
   /**
@@ -225,11 +259,5 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
   @Override
   public Iterator<K> iterator() {
     return keySet().iterator();
-  }
-
-  public static void main(String[] args) {
-    MyHashMap map = new MyHashMap(5);
-    map.put(1, 5);
-    map.put(6, 5);
   }
 }
