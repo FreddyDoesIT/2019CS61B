@@ -101,7 +101,8 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
       buckets[i] = null;
     }
 
-    keySet.clear();
+//    keySet.clear();
+    keySet().clear();
     size = 0;
   }
 
@@ -109,7 +110,8 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
   public boolean containsKey(K key) {
     validate(key);
 
-    return keySet.contains(key);
+//    return keySet.contains(key);
+    return keySet().contains(key);
   }
 
   @Override
@@ -157,7 +159,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
     entry = new Entry(bucketIndex, key, value, buckets[bucketIndex]);
     buckets[bucketIndex] = entry;
 
-    keySet.add(key);
+//    keySet.add(key);
     size += 1;
 
     if (size > this.threshold) {
@@ -203,9 +205,31 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
 
   @Override
   public Set<K> keySet() {
-    return keySet;
+    /*This uses an instance variable defined at line 64.
+      we can also use a local variable to implement this
+      by traversing all elements in buckets.
+     */
+
+//    return keySet;
+
+    // This is a local variable instead of an instance variable.
+    Set<K> set = new HashSet<>();
+    for (int i = 0; i < buckets.length; i++) {
+      if (buckets[i] != null) {
+        Entry<K, V> entry = buckets[i];
+        while (entry != null) {
+          set.add(entry.getKey());
+          entry = entry.getNext();
+        }
+      }
+    }
+
+    return set;
   }
 
+  /*
+  It uses two pointers to remove the specified entry.
+   */
   @Override
   public V remove(K key) {
     validate(key);
@@ -215,27 +239,24 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
 
     int bucketIndex = hash(key, buckets.length);
     Entry<K, V> entry = buckets[bucketIndex];
-    while (entry != null) {
-      if (bucketIndex == entry.hash && entry.isSameKey(key)) {
-        if (entry.getNext() != null) {
-          Entry<K, V> rest = entry.getNext();
-          Entry<K, V> restStart = rest;
-          while (rest.getNext() != null) {
-            rest = rest.getNext();
-          }
-          rest.setNext(buckets[bucketIndex]);
-          buckets[bucketIndex] = restStart;
-        }
-        V result = entry.getValue();
-        entry = null;
-        size--;
-        keySet.remove(key);
-        return result;
-      }
-      entry = entry.getNext();
+    Entry<K, V> nextEntry = entry.getNext();
+    // buckets[bucketIndex] has only one Entry object
+    V result;
+    if (nextEntry == null) {
+      result = entry.getValue();
+      buckets[bucketIndex] = null;
+      size--;
+      return result;
     }
 
-    return null;
+    while(!nextEntry.isSameKey(key)) {
+      entry = nextEntry;
+      nextEntry = nextEntry.getNext();
+    }
+    result = nextEntry.getValue();
+    entry.setNext(nextEntry.getNext());
+    size--;
+    return result;
   }
 
   @Override
