@@ -1,7 +1,8 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
-
+// This actually is to check if the given graph is bipartite or not
+// Reference: https://www.geeksforgeeks.org/bipartite-graph/
 public class SeparableEnemySolver {
 
     Graph g;
@@ -24,7 +25,36 @@ public class SeparableEnemySolver {
      */
     public boolean isSeparable() {
         // TODO: Fix me
-        return false;
+        Map<String, Integer> colors = new HashMap<>();
+        for (String label: g.labels()) {
+            if (!colors.containsKey(label)) {
+                if (!isBipartite(label, colors, 1, label)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private boolean isBipartite(String label,
+                                Map<String, Integer> colors,
+                                int color,
+                                String parent) {
+        if (colors.containsKey(label)) {
+            return colors.get(label) == color;
+        }
+
+        colors.put(label, color);
+        for (String neighbor: g.neighbors(label)) {
+            if (!neighbor.equals(parent)) {
+                if (!isBipartite(neighbor, colors, -1 * color, label)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
 

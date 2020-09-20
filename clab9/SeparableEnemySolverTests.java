@@ -1,6 +1,7 @@
 import org.junit.Test;
 
 import java.io.FileNotFoundException;
+import java.nio.file.Paths;
 
 import static org.junit.Assert.assertEquals;
 
@@ -39,25 +40,25 @@ public class SeparableEnemySolverTests {
 
     @Test
     public void input1() throws FileNotFoundException {
-        SeparableEnemySolver solver = new SeparableEnemySolver("input/party1");
+        SeparableEnemySolver solver = new SeparableEnemySolver("clab9/input/party1");
         assertEquals(true, solver.isSeparable());
     }
 
     @Test
     public void input2() throws FileNotFoundException {
-        SeparableEnemySolver solver = new SeparableEnemySolver("input/party2");
+        SeparableEnemySolver solver = new SeparableEnemySolver("clab9/input/party2");
         assertEquals(true, solver.isSeparable());
     }
 
     @Test
     public void input3() throws FileNotFoundException {
-        SeparableEnemySolver solver = new SeparableEnemySolver("input/party3");
+        SeparableEnemySolver solver = new SeparableEnemySolver("clab9/input/party3");
         assertEquals(false, solver.isSeparable());
     }
 
     @Test
     public void input4() throws FileNotFoundException {
-        SeparableEnemySolver solver = new SeparableEnemySolver("input/party4");
+        SeparableEnemySolver solver = new SeparableEnemySolver("clab9/input/party4");
         assertEquals(false, solver.isSeparable());
     }
 
